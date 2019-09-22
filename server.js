@@ -31,9 +31,8 @@ function authToken(req, res, next) {
     // const token = authHeader && authHeader.split(' ')[1]
     const { username, uid } = req.body 
     const payload = {
-        "sub": "1234567890",
         "name": username,
-        "iat": uid
+        "uid": uid
     }
     if(!authHeader){
         return res.sendStatus(401)

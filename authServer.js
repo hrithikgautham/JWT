@@ -11,10 +11,11 @@ app.post('/login', (req, res) => {
      * { uswername: 'string', uid: 'number'}
      */
     const { username, uid } = req.body
+    // user authentication
+    // query database and check if the user is a reliable customer
     const payload = {
-        "sub": "1234567890",
         "name": username,
-        "iat": uid
+        "uid": uid
     }
     const token = tokens.TOKEN_B
     const at = jwt.sign(payload, token)
