@@ -12,8 +12,9 @@ app.post('/login', (req, res) => {
      */
     const { username, uid } = req.body
     const payload = {
-        username,
-        uid
+        "sub": "1234567890",
+        "name": username,
+        "iat": uid
     }
     const token = tokens.TOKEN_B
     const at = jwt.sign(payload, token)

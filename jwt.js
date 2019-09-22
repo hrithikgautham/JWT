@@ -1,8 +1,8 @@
 const crypto = require('crypto')
 
 const header = {
-    typ: 'JWT',
-    alg: 'HS256'
+    "alg": "HS256",
+    "typ": "JWT"
 }
 
 function sign(payload, token) {
@@ -14,7 +14,7 @@ function sign(payload, token) {
     }
     const b64Header = b64Encode(JSON.stringify(header))
     const b64Payload = b64Encode(JSON.stringify(payload))
-    return `${b64Header}.${b64Payload}.${crypto.createHash('sha256').update(`${b64Header}${b64Payload}${token}`).digest('base64')}`
+    return `${b64Header}.${b64Payload}.${crypto.createHash('sha256', token).update(`${b64Header}.${b64Payload}`).digest('base64')}`
 }
 
 function b64Encode(data) {
@@ -24,9 +24,14 @@ function b64Encode(data) {
 
 function verify(authHeader, payload, token) {
     return new Promise((resolve, reject) => {
-        const [ , , hashedToken] = authHeader.split('.')
-        const targetHash = crypto.createHash('sha256').update(`${b64Encode(JSON.stringify(header))}${b64Encode(JSON.stringify(payload))}${token}`).digest('base64')
-        if(targetHash === hashedToken)
+        const [hashedHeader ,payloadHash , hashedToken] = authHeader.split('.')
+        const targetHash = crypto.createHash('sha256', token).update(`${b64Encode(JSON.stringify(header))}.${b64Encode(JSON.stringify(payload))}`).digest('base64')
+        if(targetHash === hashedToken && hashedHeader === b64Encode(JSON.stringify(header)) && payloadHash === b64Encode(JSON.stringify(payload))) 
+            /**
+             * check for all the posiible malicious activities
+             * the payload and the header must also be checked incase the 
+             * the JWT was compromised by man in the middle attack. 
+             */
             resolve(payload)
         else
             reject('Malicious User')

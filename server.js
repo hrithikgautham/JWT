@@ -21,7 +21,7 @@ const posts = [// mock database
 ]
 
 app.get('/posts', authToken, (req, res) => {// actual server
-    res.json(posts.filter(post => post.username === req.user.username));
+    res.json(posts.filter(post => post.username === req.user.name));
 })
 
 function authToken(req, res, next) {
@@ -31,8 +31,9 @@ function authToken(req, res, next) {
     // const token = authHeader && authHeader.split(' ')[1]
     const { username, uid } = req.body 
     const payload = {
-        username,
-        uid
+        "sub": "1234567890",
+        "name": username,
+        "iat": uid
     }
     if(!authHeader){
         return res.sendStatus(401)
